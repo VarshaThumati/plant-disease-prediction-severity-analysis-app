@@ -17,7 +17,7 @@ except ImportError:
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
-MODEL_PATH    = "model/plant_model.tflite"
+MODEL_PATH    = os.path.join(os.path.dirname(__file__), "model", "plant_model.tflite")
 IMAGE_SIZE    = 224
 MAX_FILE_SIZE = 10 * 1024 * 1024   # 10 MB hard limit
 
@@ -65,7 +65,7 @@ interpreter = None
 async def lifespan(app: FastAPI):
     global interpreter
     try:
-        interpreter = tflite.Interpreter(model_path=MODEL_PATH)
+        interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
         interpreter.allocate_tensors()
         print("✅ Model loaded successfully.")
     except Exception as e:
@@ -93,6 +93,21 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+interpreter = None
+
+@app.on_event("startup")
+def load_model():
+    global interpreter
+
+    MODEL_PATH = os.path.join(os.path.dirname(__file__), "model", "plant_model.tflite")
+
+    print("Loading model from:", MODEL_PATH)
+
+    interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
+    interpreter.allocate_tensors()
+
+    print("Model loaded successfully!")
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
