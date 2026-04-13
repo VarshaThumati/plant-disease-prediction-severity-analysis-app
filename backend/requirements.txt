@@ -1,6 +1,6 @@
 fastapi
 uvicorn
 python-multipart
-numpy
 pillow
-tflite-runtime
+numpy==1.26.4
+tflite-runtime==2.14.0
