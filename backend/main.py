@@ -63,9 +63,8 @@ DISEASE_META = {
 
 app = FastAPI(
     title="Plant Disease Detection API",
-    version="2.0.0",
-    lifespan=lifespan,
-)
+    version="2.0.0"
+    )
 
 # CORS — read allowed origins from environment variable so it's easy to update
 # Set ALLOWED_ORIGINS in Render dashboard, e.g.:
@@ -79,8 +78,6 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
-
-interpreter = None
 
 interpreter = None
 
