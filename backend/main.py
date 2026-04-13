@@ -59,20 +59,6 @@ DISEASE_META = {
 
 # ── Model (loaded once at startup) ────────────────────────────────────────────
 
-interpreter = None
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global interpreter
-    try:
-        interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
-        interpreter.allocate_tensors()
-        print("✅ Model loaded successfully.")
-    except Exception as e:
-        print(f"❌ Failed to load model: {e}")
-    yield   # app runs here
-    # nothing to clean up on shutdown
-
 # ── App setup ─────────────────────────────────────────────────────────────────
 
 app = FastAPI(
@@ -96,18 +82,21 @@ app.add_middleware(
 
 interpreter = None
 
+interpreter = None
+
 @app.on_event("startup")
 def load_model():
     global interpreter
 
-    MODEL_PATH = os.path.join(os.path.dirname(__file__), "model", "plant_model.tflite")
-
     print("Loading model from:", MODEL_PATH)
 
-    interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
-    interpreter.allocate_tensors()
-
-    print("Model loaded successfully!")
+    try:
+        interpreter = tflite.Interpreter(model_path=MODEL_PATH)
+        interpreter.allocate_tensors()
+        print("✅ Model loaded successfully!")
+    except Exception as e:
+        print("❌ Failed to load model:", str(e))
+        interpreter = None
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
