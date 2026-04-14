@@ -170,7 +170,7 @@ The system provides:
 
 ## 🔗 Live Demo
 
-*Add your deployed frontend link here*
+https://plant-disease-prediction-severity.onrender.com
 
 ---
 
