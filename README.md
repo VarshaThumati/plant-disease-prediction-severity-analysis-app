@@ -166,21 +166,21 @@ The system provides:
 
 Unhealthy Leaf Analysis
 
-<img width="1919" height="966" alt="image" src="https://github.com/user-attachments/assets/134b112e-06c9-4e68-908e-a5e490955568" />
+<img width="1916" height="961" alt="image" src="https://github.com/user-attachments/assets/f8e98720-1774-4de4-97d7-fa6eb84bf005" />
 
-<img width="1916" height="965" alt="image" src="https://github.com/user-attachments/assets/65b48842-29ea-4edd-a79f-2c757e9a3bc8" />
+<img width="1916" height="974" alt="image" src="https://github.com/user-attachments/assets/461bc55b-ac17-4d48-82cd-734be0e9306f" />
 
-<img width="1919" height="965" alt="image" src="https://github.com/user-attachments/assets/0fff92fd-acb2-4b72-a169-23a5393613e0" />
+<img width="1919" height="965" alt="image" src="https://github.com/user-attachments/assets/3a972982-b509-4a3b-8c40-a84d3cdf176c" />
 
-<img width="1919" height="969" alt="image" src="https://github.com/user-attachments/assets/27229e1e-c420-425e-bead-e56f30271ae6" />
+<img width="1919" height="966" alt="image" src="https://github.com/user-attachments/assets/fdd83993-bfc4-4b9c-98d1-bc740df8256e" />
 
 Healthy Leaf Analysis
 
-<img width="1916" height="966" alt="image" src="https://github.com/user-attachments/assets/607786cb-c085-4060-af7c-7db01ab7b4da" />
+<img width="1919" height="965" alt="image" src="https://github.com/user-attachments/assets/8ca22ce7-beb8-4a3e-8c95-3082dde54a77" />
 
-<img width="1918" height="960" alt="image" src="https://github.com/user-attachments/assets/295c9a82-f3b1-40b6-99aa-4c7abaeade3f" />
+<img width="1919" height="972" alt="image" src="https://github.com/user-attachments/assets/e1b60066-c1d0-4339-8e7b-2e5bf3eb8cad" />
 
-<img width="1917" height="966" alt="image" src="https://github.com/user-attachments/assets/0e6612b7-b0d8-4494-a494-49e3c4896c38" />
+<img width="1919" height="960" alt="image" src="https://github.com/user-attachments/assets/f7bccd3b-558c-4ef3-a58e-da27b32db5b3" />
 
 ---
 
