@@ -174,23 +174,6 @@ The system provides:
 
 ---
 
-## ⚠️ Limitations
-
-* Progression prediction is rule-based (not time-series learning)
-* Accuracy depends on image quality
-* Limited to trained disease classes
-
----
-
-## 🔮 Future Enhancements
-
-* Real-time camera detection
-* Treatment recommendations
-* Multi-crop support expansion
-* Time-series based progression prediction using advanced models
-
----
-
 ## 👩‍💻 Author
 
 **Lakshmi Varsha Thumati**
