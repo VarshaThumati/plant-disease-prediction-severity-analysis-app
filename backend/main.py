@@ -7,6 +7,7 @@ from PIL import Image
 import io
 import os
 import uvicorn
+from utils.severity_analysis import calculate_severity_and_spread
 
 # Try tflite_runtime first, fall back to full tensorflow
 try:
@@ -40,21 +41,21 @@ CLASS_NAMES = [
 ]
 
 DISEASE_META = {
-    "Bell Pepper - Bacterial Spot":    {"severity_factor": 0.75, "spread_factor": 0.85, "treatment": "Remove infected leaves. Apply copper-based bactericide."},
-    "Bell Pepper - Healthy":           {"severity_factor": 0.00, "spread_factor": 0.00, "treatment": "Plant is healthy. Maintain regular care."},
-    "Potato - Early Blight":           {"severity_factor": 0.55, "spread_factor": 0.65, "treatment": "Apply chlorothalonil fungicide. Remove lower infected leaves."},
-    "Potato - Late Blight":            {"severity_factor": 0.95, "spread_factor": 0.95, "treatment": "Destroy infected plants immediately. Apply mancozeb fungicide."},
-    "Potato - Healthy":                {"severity_factor": 0.00, "spread_factor": 0.00, "treatment": "Plant is healthy. Maintain regular care."},
-    "Tomato - Bacterial Spot":         {"severity_factor": 0.70, "spread_factor": 0.75, "treatment": "Avoid overhead watering. Use copper-based spray."},
-    "Tomato - Early Blight":           {"severity_factor": 0.60, "spread_factor": 0.70, "treatment": "Apply fungicide. Improve air circulation."},
-    "Tomato - Late Blight":            {"severity_factor": 0.95, "spread_factor": 0.95, "treatment": "Remove all infected tissue. Apply systemic fungicide immediately."},
-    "Tomato - Leaf Mold":              {"severity_factor": 0.65, "spread_factor": 0.70, "treatment": "Reduce humidity. Apply fungicide."},
-    "Tomato - Septoria Leaf Spot":     {"severity_factor": 0.65, "spread_factor": 0.72, "treatment": "Remove infected leaves. Apply copper or chlorothalonil."},
-    "Tomato - Spider Mites":           {"severity_factor": 0.70, "spread_factor": 0.80, "treatment": "Apply miticide or neem oil. Keep plants well-watered."},
-    "Tomato - Target Spot":            {"severity_factor": 0.65, "spread_factor": 0.68, "treatment": "Apply fungicide. Remove heavily infected leaves."},
-    "Tomato - Yellow Leaf Curl Virus": {"severity_factor": 0.92, "spread_factor": 0.90, "treatment": "No cure. Remove infected plants. Control whitefly vectors."},
-    "Tomato - Mosaic Virus":           {"severity_factor": 0.90, "spread_factor": 0.88, "treatment": "No cure. Remove infected plants. Disinfect all tools."},
-    "Tomato - Healthy":                {"severity_factor": 0.00, "spread_factor": 0.00, "treatment": "Plant is healthy. Maintain regular care."},
+    "Bell Pepper - Bacterial Spot":    {"description": "Remove infected leaves. Apply copper-based bactericide."},
+    "Bell Pepper - Healthy":           {"description": "Plant is healthy. Maintain regular care."},
+    "Potato - Early Blight":           {"description": "Apply chlorothalonil fungicide. Remove lower infected leaves."},
+    "Potato - Late Blight":            {"description": "Destroy infected plants immediately. Apply mancozeb fungicide."},
+    "Potato - Healthy":                {"description": "Plant is healthy. Maintain regular care."},
+    "Tomato - Bacterial Spot":         {"description": "Avoid overhead watering. Use copper-based spray."},
+    "Tomato - Early Blight":           {"description": "Apply fungicide. Improve air circulation."},
+    "Tomato - Late Blight":            {"description": "Remove all infected tissue. Apply systemic fungicide immediately."},
+    "Tomato - Leaf Mold":              {"description": "Reduce humidity. Apply fungicide."},
+    "Tomato - Septoria Leaf Spot":     {"description": "Remove infected leaves. Apply copper or chlorothalonil."},
+    "Tomato - Spider Mites":           {"description": "Apply miticide or neem oil. Keep plants well-watered."},
+    "Tomato - Target Spot":            {"description": "Apply fungicide. Remove heavily infected leaves."},
+    "Tomato - Yellow Leaf Curl Virus": {"description": "No cure. Remove infected plants. Control whitefly vectors."},
+    "Tomato - Mosaic Virus":           {"description": "No cure. Remove infected plants. Disinfect all tools."},
+    "Tomato - Healthy":                {"description": "Plant is healthy. Maintain regular care."},
 }
 
 # ── Model (loaded once at startup) ────────────────────────────────────────────
@@ -117,12 +118,6 @@ def parse_label(label: str):
         plant, disease = "Unknown", label
     return plant, disease
 
-def compute_percentages(class_label: str, confidence: float):
-    meta            = DISEASE_META.get(class_label, {"severity_factor": 0.5, "spread_factor": 0.5})
-    severity_pct    = min(100, round(confidence * meta["severity_factor"] * 100))
-    progression_pct = min(100, round(severity_pct * meta["spread_factor"]))
-    return severity_pct, progression_pct
-
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.get("/")
@@ -145,27 +140,42 @@ async def predict(file: UploadFile = File(...)):
 
     # Read and size-check
     image_bytes = await file.read()
+
     if len(image_bytes) > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail="Image too large. Maximum size is 10 MB.")
 
-    # Preprocess + inference
+    temp_path = f"temp_{file.filename}"
     try:
+        # Save temp image
+        with open(temp_path, "wb") as f:
+            f.write(image_bytes)
+
+        # Preprocess + inference
         input_data = preprocess(image_bytes)
-        scores     = run_inference(input_data)
+        scores = run_inference(input_data)
+
+        # Results
+        predicted_index = int(np.argmax(scores))
+        confidence = float(scores[predicted_index])
+        confidence_pct = round(confidence * 100, 1)
+        class_label = CLASS_NAMES[predicted_index]
+        plant, disease = parse_label(class_label)
+
+        # Severity + Spread
+        severity_pct, spread = calculate_severity_and_spread(temp_path)
+        progression_pct = min(100, round(spread * 20))
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
 
-    # Results
-    predicted_index = int(np.argmax(scores))
-    confidence      = float(scores[predicted_index])
-    confidence_pct  = round(confidence * 100, 1)
-    class_label     = CLASS_NAMES[predicted_index]
-    plant, disease  = parse_label(class_label)
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
-    severity_pct, progression_pct = compute_percentages(class_label, confidence)
+    # ✅ ADD THIS BLOCK HERE (OUTSIDE try)
 
-    meta      = DISEASE_META.get(class_label, {})
-    treatment = meta.get("treatment", "Consult an agricultural expert.")
+    meta = DISEASE_META.get(class_label, {})
+    treatment = meta.get("description", "Consult an agricultural expert.")
 
     top3_indices = np.argsort(scores)[::-1][:3]
     top3 = [
@@ -173,6 +183,7 @@ async def predict(file: UploadFile = File(...)):
         for i in top3_indices
     ]
 
+    # ✅ FINAL RESPONSE
     return JSONResponse({
         "plant":       plant,
         "disease":     disease,
