@@ -1,6 +1,6 @@
 # 🌿 Plant Disease Detection, Severity & Progression Analysis
 
-An AI-powered web application that detects plant diseases from leaf images, estimates disease severity, and predicts future progression risk using deep learning.
+I designed and developed a full-stack web application along with a custom AI model, built independently as a separate project, to detect plant diseases from leaf images, estimate severity, and predict future progression using deep learning.
 
 ---
 
