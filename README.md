@@ -10,7 +10,7 @@ This project provides an end-to-end solution for plant disease detection using i
 
 * Identify the disease
 * Estimate severity percentage
-* Predict future progression risk (Low / Medium / High)
+* Predict future progression risk (Low / Medium / High) with percentage
 
 The system is deployed as a **web application** accessible on both desktop and mobile devices.
 
