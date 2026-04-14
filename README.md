@@ -164,7 +164,23 @@ The system provides:
 
 ## 📸 Screenshots
 
-*Add your project screenshots here (UI, results, mobile view)*
+Unhealthy Leaf Analysis
+
+<img width="1919" height="966" alt="image" src="https://github.com/user-attachments/assets/134b112e-06c9-4e68-908e-a5e490955568" />
+
+<img width="1916" height="965" alt="image" src="https://github.com/user-attachments/assets/65b48842-29ea-4edd-a79f-2c757e9a3bc8" />
+
+<img width="1919" height="965" alt="image" src="https://github.com/user-attachments/assets/0fff92fd-acb2-4b72-a169-23a5393613e0" />
+
+<img width="1919" height="969" alt="image" src="https://github.com/user-attachments/assets/27229e1e-c420-425e-bead-e56f30271ae6" />
+
+Healthy Leaf Analysis
+
+<img width="1916" height="966" alt="image" src="https://github.com/user-attachments/assets/607786cb-c085-4060-af7c-7db01ab7b4da" />
+
+<img width="1918" height="960" alt="image" src="https://github.com/user-attachments/assets/295c9a82-f3b1-40b6-99aa-4c7abaeade3f" />
+
+<img width="1917" height="966" alt="image" src="https://github.com/user-attachments/assets/0e6612b7-b0d8-4494-a494-49e3c4896c38" />
 
 ---
 
